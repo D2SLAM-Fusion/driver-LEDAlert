@@ -1,8 +1,33 @@
-#include "ledAlert.h"
+/*
+  File name: src/driver/ledAlert.cpp
+  File description: This file defines the class LEDAlert, which is
+                    used to control the LED status of Jetson Orin.
+
+  Author: JasonHsu
+  Created: 2023/9/21
+
+  This file is part of [LEDAlert].
+
+  [LEDAlert] is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  [LEDAlert] is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with [LEDAlert]. If not, see <https://www.gnu.org/licenses/>.
+*/
+
+
+#include "driver/ledAlert.h"
 
 inline void delay(int ms) { std::this_thread::sleep_for(std::chrono::milliseconds(ms)); }
 
-LEDAlert::LEDAlert() : led(PIN_NUM, PIN_NAME), alertLevel(ONLINE), LEDState(false) {
+LEDAlert::LEDAlert() : led(PIN_NUM, PIN_NAME), alertLevel(ONLINE), LEDState(false), scanCount(0), scanStop(false) {
     try {
         led.unexportGPIO();
         led.exportGPIO();
@@ -15,6 +40,7 @@ LEDAlert::LEDAlert() : led(PIN_NUM, PIN_NAME), alertLevel(ONLINE), LEDState(fals
 
 LEDAlert::~LEDAlert() {
     led.unexportGPIO();
+    scanStop = true;
     if (alertThread.joinable()) {
         alertThread.join();
     }
@@ -60,7 +86,7 @@ bool LEDAlert::errorState(int count) {
 
 void LEDAlert::alertThreadFunc() {
     scanCount = 1;
-    while (true) {
+    while (!scanStop) {
         try{
             switch (alertLevel) {
                 case ONLINE:

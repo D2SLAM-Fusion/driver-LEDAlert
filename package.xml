@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<package>
+  <name>ledAlert</name>
+  <version>1.0.0</version>
+  <description>
+    This package contains the ledAlert node.
+  </description>
+
+  <maintainer email="maintainer@example.com">Maintainer Name</maintainer>
+
+  <license>BSD</license>
+
+  <url type="website">https://github.com/username/package_name</url>
+
+  <author email="author@example.com">Author Name</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>roscpp</build_depend>
+  <build_depend>std_msgs</build_depend>
+
+  <run_depend>roscpp</run_depend>
+  <run_depend>std_msgs</run_depend>
+
+  <!-- Add more dependencies as needed -->
+
+  <export>
+    <!-- If this package contains nodes, uncomment the following line -->
+    <!-- <node name="node_name" pkg="package_name" type="node_type" /> -->
+
+    <build_type>catkin</build_type>
+  </export>
+</package>
