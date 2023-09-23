@@ -1,0 +1,7 @@
+<launch>
+  <arg name="config_file" default="$(find healthManager)/config/service.json" />
+
+  <node name="healthManager_node" type="healthManager_node" pkg="healthManager" output="screen">
+    <param name="config_file" value="$(arg config_file)" />
+  </node>
+</launch>

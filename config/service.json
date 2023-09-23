@@ -1,0 +1,25 @@
+{
+    "serviceList": {
+        "meshChecker": {
+            "name": "meshChecker",
+            "ROS": false,
+            "topicList": { }
+        },
+        "vinsChecker": {
+            "name": "vinsChecker",
+            "ROS": true,
+            "topicList": {
+                "vins_estimator/imu_propagate": {
+                    "name": "vins_estimator/imu_propagate",
+                    "dataType": "sensor_msgs::Imu",
+                    "queueSize": 100
+                },
+                "vins_estimator/odometry": {
+                    "name": "vins_estimator/odometry",
+                    "dataType": "nav_msgs::Odometry",
+                    "queueSize": 100
+                }
+            }
+        }
+    }
+}
