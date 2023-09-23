@@ -14,7 +14,7 @@ if(DEBUG)
     add_definitions(-DDEBUG=True)
     set(CMAKE_BUILD_TYPE Debug)
     include_directories(
-        ${CMAKE_CURRENT_LIST_DIR}/inc/debug
+        ${CMAKE_CURRENT_LIST_DIR}/3rdparty/inc/debug
     )
     set(CMAKE_CXX_STANDARD_LIBRARIES "${CMAKE_CXX_STANDARD_LIBRARIES} -lbfd -ldw ")
 endif(DEBUG)
