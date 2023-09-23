@@ -1,3 +1,6 @@
+#ifndef __SERVICE_ROS1_H__
+#define __SERVICE_ROS1_H__
+
 #include <ros/ros.h>
 #include <string>
 #include <fstream>
@@ -25,6 +28,8 @@ class rosTopicBase
         int msgQueueSize;
         std::mutex msgQueueMutex;
         void* dataOutPtr;
+        bool dataAvailable;
+        virtual bool popMsg(){ return false;};
 };
 
 template <typename T>
@@ -44,7 +49,6 @@ class rosTopic: public rosTopicBase
 
         void callback(const typename T::ConstPtr& msg)
         {
-            std::lock_guard<std::mutex> lock(this->msgQueueMutex);
             if (this->msgQueue.size() >= this->msgQueueSize)
             {
                 this->msgQueue.pop();
@@ -52,17 +56,18 @@ class rosTopic: public rosTopicBase
             this->pushMsg(msg);
         }
 
-        bool popMsg()
+        bool popMsg() override
         {
-            (T*)dataOutPtr;
             std::lock_guard<std::mutex> lock(this->msgQueueMutex);
-            if (this->msgQueue.empty())
+            if (!this->msgQueue.empty())
             {
-                return false;
+                dataOutPtr = (void*)(&this->msgQueue.front());
+                this->msgQueue.pop();
+                dataAvailable = true;
+                return true;
             }
-            dataOutPtr = &this->msgQueue.front();
-            this->msgQueue.pop();
-            return true;
+            dataAvailable = false;
+            return false;
         }
 
         bool pushMsg(const typename T::ConstPtr& msg)
@@ -74,12 +79,6 @@ class rosTopic: public rosTopicBase
             }
             this->msgQueue.push(*msg);
             return true;
-        }
-
-        bool isEmpty()
-        {
-            std::lock_guard<std::mutex> lock(this->msgQueueMutex);
-            return this->msgQueue.empty();
         }
 };
 
@@ -112,3 +111,5 @@ class rosService
         bool getTopicNameList(std::string serviceName, std::vector<std::string>& topicNameList);
         rosTopicBase* getTopicObj(std::string serviceName, std::string topicName);
 };
+
+#endif

@@ -1,7 +1,10 @@
-#ifdef ROS_VERSION_ROS1
-    #include "ros/service_ros1.h"
-#else
-    #include "ros/service_ros2.h"
+#include "services/services.h"
+
+#ifdef DEBUG
+    #define BACKWARD_HAS_BFD 1
+    #define BACKWARD_HAS_DW 1
+    #include "backward.hpp"
+    backward::SignalHandling sh;
 #endif
 
 int main(int argc, char** argv) {
@@ -9,6 +12,7 @@ int main(int argc, char** argv) {
     ros::init(argc, argv, "healthManager");
 #endif
     rosService* rosServiceHandler = new rosService;
+    vinsChecker* vinsCheckerHandler = new vinsChecker(rosServiceHandler);
 
     while(true) {
         sleep(1);
