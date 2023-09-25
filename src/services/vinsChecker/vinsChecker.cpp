@@ -33,38 +33,22 @@ vinsChecker::vinsChecker(rosService* rosServiceHandler): vinsCheckerBase() {
 vinsChecker::~vinsChecker() { }
 
 bool vinsChecker::getOneMsg() {
-    sensor_msgs::Imu* imuMsg = nullptr;
-    nav_msgs::Odometry* odomMsg = nullptr;
-
     for(auto& topicName : topicNameList){
         rosTopicBase* topicObj = rosServiceHandler->getTopicObj(serviceName, topicName);
         if (topicObj != NULL) {
             topicObj->popMsg();
             if(topicObj->dataAvailable){
                 if(topicName == "vins_estimator/imu_propagate"){
-                    imuMsg = (sensor_msgs::Imu*)(topicObj->dataOutPtr);
+                    sensor_msgs::Imu* imuMsg = (sensor_msgs::Imu*)(topicObj->dataOutPtr);
                     imuMsgQueue.push(imuMsg);
                 }
                 else if(topicName == "vins_estimator/odometry"){
-                    odomMsg = (nav_msgs::Odometry*)(topicObj->dataOutPtr);
+                    nav_msgs::Odometry* odomMsg = (nav_msgs::Odometry*)(topicObj->dataOutPtr);
                     odomMsgQueue.push(odomMsg);
                 }
-                else {
-                    // ROS_ERROR("Unknown topic name: %s", topicName.c_str());
-                    return false;
-                }
             }
-            else {
-                // ROS_ERROR("No data available for topic: %s", topicName.c_str());
-                return false;
-            }
-        }
-        else {
-            // ROS_ERROR("Unknown topic name: %s", topicName.c_str());
-            return false;
         }
     }
-
     return true;
 }
 

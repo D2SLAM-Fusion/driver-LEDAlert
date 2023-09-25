@@ -48,33 +48,7 @@ bool rosService::rosServiceThreadFunc(){
     while (this->serviceSpinFlag)
     {
         #ifdef DEBUG
-        sensor_msgs::Imu* imuMsg = nullptr;
-        nav_msgs::Odometry* odomMsg = nullptr;
 
-        std::vector<std::string> serviceNameList;
-        getServiceNameList(serviceNameList);
-        for (auto& serviceName : serviceNameList) {
-            // ROS_INFO("Service name: %s", serviceName.c_str());
-            std::vector<std::string> topicNameList;
-            getTopicNameList(serviceName, topicNameList);
-            for (auto& topicName : topicNameList) {
-                // ROS_INFO("Topic name: %s", topicName.c_str());
-                rosTopicBase* topicObj = getTopicObj(serviceName, topicName);
-                if (topicObj != NULL) {
-                    topicObj->popMsg();
-                    if(topicName == "vins_estimator/imu_propagate" && topicObj->dataAvailable){
-                        imuMsg = (sensor_msgs::Imu*)(topicObj->dataOutPtr);
-                        ROS_INFO("imuMsg: %f", imuMsg->linear_acceleration.x);
-                    }
-                    else if(topicName == "vins_estimator/odometry" && topicObj->dataAvailable){
-                        odomMsg = (nav_msgs::Odometry*)(topicObj->dataOutPtr);
-                        ROS_INFO("odomMsg: %f", odomMsg->pose.pose.position.x);
-                    }
-                    else
-                        ROS_ERROR("Unknown topic name: %s", topicName.c_str());
-                }
-            }
-        }
         #endif
 
         ros::spinOnce();
